@@ -9,6 +9,8 @@ IMAGE_DIR = "data/train2017"
 
 OUTPUT_IMAGE_DIR = "data/processed_images"
 OUTPUT_MASK_DIR = "data/processed_masks"
+os.makedirs(OUTPUT_IMAGE_DIR, exist_ok=True)
+os.makedirs(OUTPUT_MASK_DIR, exist_ok=True)
 
 # Create object of COCO dataset
 coco = COCO(ANNOTATION_FILE)
@@ -46,7 +48,7 @@ for idx, img_id in enumerate(img_ids):
     ann_ids = coco.getAnnIds(imgIds=img_id, catIds=cat_ids)
     anns = coco.loadAnns(ann_ids)
 
-    # Draw masks for model to predict and learn
+    # Draw masks for model to predict and learn from it
     for ann in anns:
         mask = np.maximum(mask, coco.annToMask(ann) * 255)
 
