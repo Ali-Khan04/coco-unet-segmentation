@@ -22,7 +22,7 @@ cat_ids = coco.getCatIds(catNms=['person'])
 img_ids = coco.getImgIds(catIds=cat_ids)
 
 # Use only first 500 images for training
-img_ids = img_ids[:500]
+img_ids = img_ids[:2000]
 
 print(f"Total selected images: {len(img_ids)}")
 
@@ -62,6 +62,6 @@ for idx, img_id in enumerate(img_ids):
     cv2.imwrite(image_save_path, image)
     cv2.imwrite(mask_save_path, mask)
 
-    print(f"Processed {idx+1}/500")
+    print(f"Processed {idx+1}/2000")
 
 print("Dataset preparation complete!")

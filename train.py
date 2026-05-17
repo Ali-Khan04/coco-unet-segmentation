@@ -12,7 +12,7 @@ IMAGE_DIR = "data/processed_images"
 MASK_DIR = "data/processed_masks"
 
 BATCH_SIZE = 8
-EPOCHS = 20
+EPOCHS = 50
 LEARNING_RATE = 0.001
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -75,6 +75,7 @@ model = smp.Unet(
     in_channels=3,
     classes=1
 )
+model.load_state_dict(torch.load("unet_model.pth", map_location=DEVICE))
 #move model to gpu 
 model = model.to(DEVICE)
 
@@ -95,6 +96,8 @@ for epoch in range(EPOCHS):
 
         images = images.to(DEVICE)
         masks = masks.to(DEVICE)
+        # Backpropagation
+        optimizer.zero_grad()
 
         # Forward pass
         outputs = model(images)
@@ -102,8 +105,7 @@ for epoch in range(EPOCHS):
         # Calculate loss
         loss = loss_fn(outputs, masks)
 
-        # Backpropagation
-        optimizer.zero_grad()
+
 
         loss.backward()
 
