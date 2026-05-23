@@ -1,91 +1,85 @@
-# ML-Based Image Segmentation using U-Net
+# PixelCut — AI Background Removal & Passport Photo Tool
 
-Semantic image segmentation project using a U-Net architecture trained from scratch on a subset of the COCO dataset.
+Semantic image segmentation web app powered by a custom-trained U-Net model. Upload any photo with a person, swap the background to any color, or generate a passport-ready photo instantly.
 
 ## Features
-
-- Trained U-Net model from scratch
-- Person-class semantic segmentation
-- COCO dataset preprocessing and mask generation
-- GPU-accelerated training using PyTorch and CUDA
-- Prediction visualization on unseen images
+- U-Net trained on COCO dataset for person segmentation
+- Background removal and color replacement
+- Passport photo generation (blue/white background, standard dimensions)
+- REST API built with FastAPI
+- React + TypeScript frontend (coming soon)
+- GPU-accelerated inference with PyTorch + CUDA
 
 ## Technologies
-
-- Python
-- PyTorch
-- OpenCV
-- COCO Dataset
-
-## Training Results
-
-### Example 1
-
-![Segmentation Result](assets/result1.png)
-
-### Example 2
-
-![Segmentation Result](assets/result2.png)
+- Python, PyTorch, OpenCV, NumPy
+- FastAPI, Uvicorn
+- segmentation-models-pytorch
+- React, TypeScript, Vite (frontend)
+- COCO 2017 Dataset
 
 ## Project Structure
-
 ```bash
-project/
+coco-unet-segmentation/
 │
-├── data/
-├── assets/
-├── train.py
-├── predict.py
-├── prepare_dataset.py
-├── README.md
+├── ml/                        # Model training and data pipeline
+│   ├── data/
+│   │   ├── train2017/
+│   │   ├── annotations/
+│   │   ├── processed_images/
+│   │   └── processed_masks/
+│   ├── assets/
+│   ├── train.py
+│   ├── predict.py
+│   ├── prepare_dataset.py
+│   ├── unet_model.pth
+│   └── requirements.txt
+│
+├── backend/                   # FastAPI inference server
+│   ├── main.py
+│   ├── inference.py
+│   └── requirements.txt
+│
+└── frontend/                  # React + TypeScript UI (coming soon)
 ```
 
-## How to Run
+## Results
+### Background Removal
+![Segmentation Result](ml/assets/result1.png)
+![Segmentation Result](ml/assets/result2.png)
 
-### Install dependencies
+## Setup & Running
+
+### ML — Dataset & Training
+Download from [COCO dataset](https://cocodataset.org):
+- `train2017.zip`
+- `annotations_trainval2017.zip`
+
+Place inside `ml/data/` then run:
 
 ```bash
+cd ml
 pip install -r requirements.txt
-```
-## Dataset Setup
-
-This project uses a subset of the COCO 2017 dataset for person-class semantic segmentation.
-
-Download the following files from the official COCO dataset website:
-
-- train2017.zip
-- annotations_trainval2017.zip
-
-After extraction, place them inside the following structure:
-
-```bash
-data/
-│
-├── train2017/
-├── annotations/
-│   ├── instances_train2017.json
-```
-
-Then run dataset preprocessing:
-
-```bash
 python prepare_dataset.py
-```
-
-This generates:
-- processed_images/
-- processed_masks/
-
-used for training the U-Net model.
-
-### Train model
-
-```bash
 python train.py
 ```
 
-### Run prediction
-
+### Backend — FastAPI Server
 ```bash
-python predict.py
+cd backend
+python -m venv venv
+source venv/Scripts/activate   # Windows Git Bash
+pip install fastapi uvicorn python-multipart opencv-python torch torchvision segmentation-models-pytorch pillow
+uvicorn main:app --reload
 ```
+
+API will be live at `http://127.0.0.1:8000`
+Interactive docs at `http://127.0.0.1:8000/docs`
+
+### API Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/remove-background` | Remove and replace background with a color |
+
+**Parameters:**
+- `file` — image file (jpg/png)
+- `bg_color` — hex color string (default: `#ffffff`)
